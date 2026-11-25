@@ -669,19 +669,32 @@ function exportJSON(){
   dlBlob(blob,`bletaria_backup_${today()}.json`);
   toast('Backup u shkarkua!','ti-download');
 }
+function normalizeDb(d){
+  if(typeof d==='string')d=JSON.parse(d);
+  if(d&&typeof d==='object'&&!Array.isArray(d)){
+    if(d.data&&typeof d.data==='object')d=d.data;
+    else if(d.db&&typeof d.db==='object')d=d.db;
+  }
+  if(!d||typeof d!=='object'||Array.isArray(d))throw new Error('struktura nuk njihet');
+  const out={};
+  Object.entries(d).forEach(([k,v])=>{if(/^\d+$/.test(k)&&Array.isArray(v)&&v.length)out[k]=v;});
+  if(!Object.keys(out).length)throw new Error('nuk u gjetën koshere me shënime');
+  return out;
+}
 function importJSON(e){
   const f=e.target.files[0];if(!f)return;
   const r=new FileReader();
-  r.onload=ev=>{
-    try{
-      let d=JSON.parse(ev.target.result);
-      if(d.version&&d.data)d=d.data;
-      if(typeof d!=='object'||Array.isArray(d))throw new Error();
-      db=d;persist('all');
-      buildGrid('grid-add',selectAdd);buildGrid('grid-view',selectView);updateStats();
-      toast('Backup u rikthye!','ti-check');
-    }catch{toast('Skedar i pavlefshëm!','ti-alert-circle',true);}
+  r.onload=async ev=>{
+    let nd;
+    try{nd=normalizeDb(String(ev.target.result).replace(/^\uFEFF/,''));}
+    catch(err){toast('Skedar i pavlefshëm: '+err.message,'ti-alert-circle',true);return;}
+    if(Object.keys(db).length&&!confirm('Kjo do të zëvendësojë të dhënat ekzistuese me ato të skedarit. Të vazhdoj?'))return;
+    db=nd;
+    buildGrid('grid-add',selectAdd);buildGrid('grid-view',selectView);updateStats();
+    await persist('all');
+    toast('Backup u rikthye!','ti-check');
   };
+  r.onerror=()=>toast('Skedari nuk u lexua','ti-alert-circle',true);
   r.readAsText(f);
   e.target.value='';
 }
