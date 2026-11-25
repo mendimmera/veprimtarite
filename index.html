@@ -99,19 +99,16 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
 <script>
 // === ZëVENDËSO me të dhënat e projektit tënd Firebase ===
 const firebaseConfig = {
-  apiKey: "AIzaSyBOtjHeq635jNofyj-NuU4mgyzFOqympiQ",
-  authDomain: "veprimtarite-87886.firebaseapp.com",
-  projectId: "veprimtarite-87886",
-  storageBucket: "veprimtarite-87886.firebasestorage.app",
-  messagingSenderId: "959208667358",
-  appId: "1:959208667358:web:f85325481868f432e5aa4f",
-  measurementId: "G-2RK3Q75YSP"
+  apiKey: "VENDOS_KËTU",
+  authDomain: "VENDOS_KËTU.firebaseapp.com",
+  projectId: "VENDOS_KËTU",
+  appId: "VENDOS_KËTU"
 };
 // =========================================================
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth(), db = firebase.firestore();
 const $ = id => document.getElementById(id);
-let uid = null, items = [], photos = [], editId = null;
+let uid = null, items = [], photos = [], editId = null, cache = {};
 
 const today = () => new Date().toISOString().slice(0, 10);
 const fmt = s => s.split('-').reverse().join('.');
@@ -179,9 +176,9 @@ function resetForm() {
   photos = []; renderPv(); $('sv').textContent = 'Ruaj'; $('cn').classList.add('hide'); $('er').textContent = '';
 }
 $('cn').onclick = () => { resetForm(); tab(2); };
-function startEdit(i) {
+async function startEdit(i) {
   editId = i.id; $('d').value = i.date; $('ty').value = i.type; $('ds').value = i.desc || '';
-  photos = (i.photos || []).slice(); renderPv();
+  photos = (await getPhotos(i)).slice(); renderPv();
   $('sv').textContent = 'Përditëso'; $('cn').classList.remove('hide');
   tab(1);
 }
@@ -189,12 +186,15 @@ $('sv').onclick = async () => {
   const type = $('ty').value.trim(), desc = $('ds').value.trim(), date = $('d').value;
   $('er').textContent = '';
   if (!date || !type) { $('er').textContent = 'Plotëso datën dhe llojin.'; return; }
-  const doc = { date, type, desc, photos, created: Date.now() };
-  if (JSON.stringify(doc).length > 950000) { $('er').textContent = 'Fotot janë shumë të mëdha; hiq një foto.'; return; }
+  const doc = { date, type, desc, np: photos.length, created: Date.now() };
+  if (JSON.stringify(photos).length > 950000) { $('er').textContent = 'Fotot janë shumë të mëdha; hiq një foto.'; return; }
   $('sv').disabled = true;
   try {
-    const col = db.collection('users').doc(uid).collection('activities');
-    if (editId) { delete doc.created; await col.doc(editId).update(doc); } else await col.add(doc);
+    const U = db.collection('users').doc(uid), col = U.collection('activities'), pc = U.collection('photos');
+    let id = editId;
+    if (editId) { delete doc.created; await col.doc(editId).update(doc); } else id = (await col.add(doc)).id;
+    if (photos.length) await pc.doc(id).set({ photos }); else if (editId) await pc.doc(id).delete();
+    cache[id] = photos.slice();
     resetForm();
     await load();
     tab(2);
@@ -203,9 +203,28 @@ $('sv').onclick = async () => {
 };
 
 // ---- Ngarko, filtro, shfaq ----
+async function getPhotos(i) {
+  if (cache[i.id]) return cache[i.id];
+  if (!i.np) return [];
+  const d = await db.collection('users').doc(uid).collection('photos').doc(i.id).get();
+  return cache[i.id] = d.exists ? (d.data().photos || []) : [];
+}
+
 async function load() {
   const s = await db.collection('users').doc(uid).collection('activities').orderBy('date', 'desc').get();
-  items = s.docs.map(d => ({ id: d.id, ...d.data() }));
+  items = [];
+  for (const d of s.docs) {
+    const x = { id: d.id, ...d.data() };
+    if (x.photos) { // migrim nga versioni i vjetër: fotot kalojnë në koleksion të veçantë
+      const ph = x.photos; delete x.photos; x.np = ph.length; cache[x.id] = ph;
+      try {
+        const U = db.collection('users').doc(uid);
+        if (ph.length) await U.collection('photos').doc(x.id).set({ photos: ph });
+        await U.collection('activities').doc(x.id).update({ photos: firebase.firestore.FieldValue.delete(), np: ph.length });
+      } catch (_) {}
+    }
+    items.push(x);
+  }
   const types = [...new Set(items.map(i => i.type))].sort((a, b) => a.localeCompare(b));
   const cur = $('fl').value;
   $('fl').innerHTML = '<option value="">Të gjitha llojet</option>' + types.map(t => `<option>${esc(t)}</option>`).join('');
@@ -227,16 +246,27 @@ function render() {
   if (!list.length) { box.innerHTML = '<p class="dt">Asnjë veprimtari.</p>'; return; }
   list.forEach(i => {
     const el = document.createElement('div'); el.className = 'it';
-    el.innerHTML = `<div class="m"><div><span class="t">${esc(i.type)}</span> <span class="dt">${fmt(i.date)}</span></div><span><button class="d ed" style="color:var(--ac)">Ndrysho</button><button class="d dl">Fshi</button></span></div><p>${esc(i.desc || '')}</p><div class="ph"></div>`;
-    (i.photos || []).forEach(p => {
-      const im = document.createElement('img'); im.src = p;
-      im.onclick = () => { $('lbi').src = p; $('lb').style.display = 'flex'; };
-      el.querySelector('.ph').appendChild(im);
-    });
+    el.innerHTML = `<div class="m"><div><span class="t">${esc(i.type)}</span> <span class="dt">${fmt(i.date)}</span></div><span><button class="d ed" style="color:var(--ac)">Ndrysho</button><button class="d dl">Fshi</button></span></div><p>${esc(i.desc || '')}</p>${i.np ? `<button class="s pb">📷 ${i.np} foto</button>` : ''}<div class="ph"></div>`;
+    const pb = el.querySelector('.pb'), ph = el.querySelector('.ph');
+    if (pb) pb.onclick = async () => {
+      if (ph.children.length) { ph.innerHTML = ''; return; }
+      pb.disabled = true; pb.textContent = 'Duke ngarkuar…';
+      try {
+        (await getPhotos(i)).forEach(p => {
+          const im = document.createElement('img'); im.src = p;
+          im.onclick = () => { $('lbi').src = p; $('lb').style.display = 'flex'; };
+          ph.appendChild(im);
+        });
+      } catch (e) {}
+      pb.disabled = false; pb.textContent = `📷 ${i.np} foto`;
+    };
     el.querySelector('.ed').onclick = () => startEdit(i);
     el.querySelector('.dl').onclick = async () => {
       if (!confirm('Ta fshij këtë veprimtari?')) return;
-      await db.collection('users').doc(uid).collection('activities').doc(i.id).delete();
+      const U = db.collection('users').doc(uid);
+      await U.collection('activities').doc(i.id).delete();
+      await U.collection('photos').doc(i.id).delete();
+      delete cache[i.id];
       load();
     };
     box.appendChild(el);
