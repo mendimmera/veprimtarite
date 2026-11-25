@@ -81,6 +81,7 @@ body{background:var(--bg2);font-family:-apple-system,BlinkMacSystemFont,'Segoe U
 [data-theme="dark"] .hex-btn.has-data{color:var(--amber)}
 .dot{width:6px;height:6px;background:var(--amber);border-radius:50%;position:absolute;top:5px;right:5px}
 .hex-btn.hidden-cell{display:none}
+.qdot{width:11px;height:11px;border-radius:50%;border:1.5px solid #9CA3AF;position:absolute;bottom:4px;left:50%;transform:translateX(-50%)}
 
 /* SEL BAR */
 .sel-bar{background:var(--amber-light);border:1.5px solid var(--amber);border-radius:10px;padding:12px 14px;font-size:15px;color:var(--amber-dark);display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
@@ -488,12 +489,20 @@ function toggleTheme(){
 }
 
 // ─── GRID ────────────────────────────────────────────────
+// Viti i mbretëreshës aktuale të kosheres = shënimi më i fundit i mbretëreshës (përveç nëse është "e humbur")
+function hiveQueen(n){
+  let best=null;
+  (db[n]||[]).forEach(e=>{if(e.cat==='mbreteresha'&&e.viti&&(!best||e.date>=best.date))best=e;});
+  return best&&!/humbur/i.test(best.gjendje||'')?best.viti:null;
+}
 function buildGrid(id,onClick){
   const g=document.getElementById(id);g.innerHTML='';
   for(let i=1;i<=100;i++){
     const b=document.createElement('button');
     b.className='hex-btn';b.dataset.n=i;b.textContent=i;
     if(db[i]&&db[i].length){b.classList.add('has-data');const d=document.createElement('span');d.className='dot';b.appendChild(d)}
+    const qy=hiveQueen(i),qc=qy&&queenColor(qy);
+    if(qc){const q=document.createElement('span');q.className='qdot';q.style.background=qc.hex;q.title='Mbretëresha '+qy+' · '+qc.name;b.appendChild(q);}
     b.onclick=()=>onClick(i);
     g.appendChild(b);
   }
