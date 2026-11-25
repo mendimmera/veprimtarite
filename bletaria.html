@@ -310,7 +310,8 @@ body{background:var(--bg2);font-family:-apple-system,BlinkMacSystemFont,'Segoe U
         </div>
         <div class="field-row">
           <div class="label">Viti i lindjes / çeljes</div>
-          <input type="number" class="form-input" id="mbre-viti" placeholder="2024" min="2000" max="2030">
+          <input type="number" class="form-input" id="mbre-viti" placeholder="2024" min="2000" max="2099" oninput="showQueenColor()">
+          <div id="mbre-color" style="margin-top:8px;font-size:14px;color:var(--text2)"></div>
         </div>
         <div class="field-row">
           <div class="label">Raca</div>
@@ -621,7 +622,7 @@ function renderView(n){
       let content='';
       if(e.cat==='trajtime')content=`<strong>${e.type}</strong>${e.doza?' · '+e.doza:''}${e.note?'<br><span style="color:var(--text2)">'+esc(e.note)+'</span>':''}`;
       else if(e.cat==='ushqim')content=`<strong>${e.type}</strong>${e.sasia?' · '+e.sasia+' kg/l':''}${e.note?'<br><span style="color:var(--text2)">'+esc(e.note)+'</span>':''}`;
-      else if(e.cat==='mbreteresha')content=`<strong>${e.gjendje}</strong>${e.raca?'<br>'+e.raca:''}${e.viti?' · '+e.viti:''}${e.note?'<br><span style="color:var(--text2)">'+esc(e.note)+'</span>':''}`;
+      else if(e.cat==='mbreteresha')content=`<strong>${e.gjendje}</strong>${e.raca?'<br>'+e.raca:''}${e.viti?'<br>'+e.viti+' · '+qdot(e.viti):''}${e.note?'<br><span style="color:var(--text2)">'+esc(e.note)+'</span>':''}`;
       else content=esc(e.text||'').replace(/\n/g,'<br>');
       h+=`<div class="entry-card" data-cat="${e.cat||'shenime'}"><div class="entry-header"><span class="entry-cat-badge ${meta.badge}"><i class="ti ${meta.icon}"></i>${meta.label}</span><span class="entry-date"><i class="ti ti-calendar"></i>${d}/${m}/${y}</span><button class="btn-del" onclick="delEntry(${n},${e.id})"><i class="ti ti-trash"></i></button></div><div class="entry-text">${content}</div></div>`;
     });
@@ -636,6 +637,22 @@ function filterView(btn,cat,n){
   });
 }
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+// Ngjyra e shenjimit të mbretëreshës sipas vitit (standardi ndërkombëtar, cikël 5-vjeçar):
+// 1/6 e bardhë · 2/7 e verdhë · 3/8 e kuqe · 4/9 e gjelbër · 5/0 e kaltër
+const QCOL={1:['E bardhë','#FFFFFF'],2:['E verdhë','#FACC15'],3:['E kuqe','#EF4444'],4:['E gjelbër','#22C55E'],5:['E kaltër','#3B82F6']};
+function queenColor(y){
+  y=parseInt(y,10);if(!y)return null;
+  const c=QCOL[y%5===0?5:y%5];return{name:c[0],hex:c[1]};
+}
+function qdot(y){
+  const c=queenColor(y);if(!c)return '';
+  return `<span style="display:inline-flex;align-items:center;gap:5px;vertical-align:middle"><span style="width:13px;height:13px;border-radius:50%;background:${c.hex};border:1.5px solid #9CA3AF;display:inline-block"></span>${c.name}</span>`;
+}
+function showQueenColor(){
+  const y=document.getElementById('mbre-viti').value;
+  document.getElementById('mbre-color').innerHTML=queenColor(y)?'Ngjyra e shenjimit: '+qdot(y):'';
+}
 
 function delEntry(n,id){
   if(!db[n])return;
@@ -706,7 +723,7 @@ function exportExcel(){
       let det='',note='';
       if(e.cat==='trajtime'){det=`${e.type||''}${e.doza?' ('+e.doza+')':''}`;note=e.note||'';}
       else if(e.cat==='ushqim'){det=`${e.type||''}${e.sasia?' '+e.sasia+'kg/l':''}`;note=e.note||'';}
-      else if(e.cat==='mbreteresha'){det=`${e.gjendje||''}${e.raca?' · '+e.raca:''}${e.viti?' · '+e.viti:''}`;note=e.note||'';}
+      else if(e.cat==='mbreteresha'){det=`${e.gjendje||''}${e.raca?' · '+e.raca:''}${e.viti?' · '+e.viti+(queenColor(e.viti)?' ('+queenColor(e.viti).name+')':''):''}`;note=e.note||'';}
       else{det=e.text||'';}
       rows.push([+n,cat,e.date,det,note]);
     });
