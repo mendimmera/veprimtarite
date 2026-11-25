@@ -77,13 +77,16 @@ body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
   </div>
 
   <!-- Kërko -->
-  <div class="c hide" id="vList">
-    <label style="margin-top:0">Shfaq veprimtaritë e llojit:</label>
-    <select id="fl"></select>
-    <label>Kërko në përshkrim</label><input id="q" type="search" placeholder="fjalë kyçe">
-    <div class="r"><div style="flex:1"><label style="margin-top:0">Nga data</label><input id="df" type="date"></div><div style="flex:1"><label style="margin-top:0">Deri në datë</label><input id="dt2" type="date"></div></div>
-    <div class="r"><button id="cl" class="s">Pastro filtrat</button></div>
-    <div id="ls" style="margin-top:8px"></div>
+  <div id="vList" class="hide">
+    <div class="c" style="padding:10px">
+      <div class="r" style="margin:0"><select id="fl" style="flex:1;min-width:0"></select><button id="ft" class="s">🔍 Filtra</button></div>
+      <div id="fp" class="hide">
+        <input id="q" type="search" placeholder="Kërko në përshkrim" style="margin-top:8px">
+        <div class="r" style="margin-top:8px"><div style="flex:1;min-width:130px"><label style="margin:0 0 2px">Nga data</label><input id="df" type="date"></div><div style="flex:1;min-width:130px"><label style="margin:0 0 2px">Deri në datë</label><input id="dt2" type="date"></div></div>
+        <div class="r"><button id="cl" class="s">Pastro filtrat</button></div>
+      </div>
+    </div>
+    <div id="ls" class="c" style="padding-top:6px;padding-bottom:6px"></div>
   </div>
   <nav id="nv"><button id="n1" class="on">➕ Shto</button><button id="n2">📋 Veprimtaritë</button></nav>
 </div>
@@ -212,12 +215,14 @@ async function load() {
 }
 ['fl', 'q', 'df', 'dt2'].forEach(id => { $(id).oninput = render; });
 $('fl').onchange = render;
+$('ft').onclick = () => $('fp').classList.toggle('hide');
 $('cl').onclick = () => { $('fl').value = ''; $('q').value = ''; $('df').value = ''; $('dt2').value = ''; render(); };
 const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 function render() {
   const f = $('fl').value, q = $('q').value.trim().toLowerCase(), a = $('df').value, b = $('dt2').value;
   const list = items.filter(i => (!f || i.type === f) && (!q || (i.desc || '').toLowerCase().includes(q) || i.type.toLowerCase().includes(q)) && (!a || i.date >= a) && (!b || i.date <= b));
+  $('ft').textContent = (q || a || b) ? '🔍 Filtra •' : '🔍 Filtra';
   const box = $('ls'); box.innerHTML = `<p class="dt" style="margin:0 0 4px">${list.length} veprimtari</p>`;
   if (!list.length) { box.innerHTML = '<p class="dt">Asnjë veprimtari.</p>'; return; }
   list.forEach(i => {
