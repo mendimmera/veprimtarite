@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="sq">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#F59E0B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bletaria">
+<title>Bletaria ime</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.34.0/iconfont/tabler-icons.min.css">
+
+<!-- Splash Screen -->
+<style>
+#splash{position:fixed;inset:0;background:#F59E0B;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.5s}
+#splash.hide{opacity:0;pointer-events:none}
+.splash-icon{font-size:80px;color:#fff;margin-bottom:16px;animation:pulse 1.5s infinite}
+.splash-title{font-size:28px;font-weight:700;color:#fff;letter-spacing:1px}
+.splash-sub{font-size:15px;color:rgba(255,255,255,0.8);margin-top:6px}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+</style>
+
+<style>
+:root{
+  --bg1:#ffffff;--bg2:#f9fafb;--bg3:#f3f4f6;
+  --text1:#111827;--text2:#6b7280;--text3:#9ca3af;
+  --border1:#e5e7eb;--border2:#d1d5db;
+  --amber:#F59E0B;--amber-dark:#92400E;--amber-light:#FEF3C7;
+  --amber-mid:#FDE68A;
+  --green:#065F46;--red:#DC2626;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 1px 2px rgba(0,0,0,0.05);
+}
+[data-theme="dark"]{
+  --bg1:#1f2937;--bg2:#111827;--bg3:#374151;
+  --text1:#f9fafb;--text2:#d1d5db;--text3:#9ca3af;
+  --border1:#374151;--border2:#4b5563;
+  --amber-light:#451a03;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg2);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text1);font-size:16px}
+.app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--bg1)}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#F59E0B,#D97706);padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20;box-shadow:0 2px 8px rgba(245,158,11,0.3)}
+.header-icon{font-size:26px;color:#fff}
+.header-info{flex:1}
+.header-title{font-size:20px;font-weight:700;color:#fff}
+.header-sub{font-size:12px;color:rgba(255,255,255,0.85);margin-top:1px}
+.header-actions{display:flex;gap:8px}
+.icon-btn{background:rgba(255,255,255,0.2);border:none;border-radius:8px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:18px;transition:background 0.15s}
+.icon-btn:active{background:rgba(255,255,255,0.35)}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border1);background:var(--bg1);position:sticky;top:62px;z-index:19;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{flex:1;min-width:60px;padding:10px 4px;font-size:12px;font-weight:500;text-align:center;cursor:pointer;color:var(--text2);border:none;background:none;border-bottom:2.5px solid transparent;font-family:inherit;transition:all 0.15s;white-space:nowrap}
+.tab.active{color:var(--amber-dark);border-bottom-color:var(--amber)}
+.tab i{font-size:18px;display:block;margin:0 auto 2px}
+[data-theme="dark"] .tab.active{color:var(--amber)}
+
+/* SCREENS */
+.screen{display:none;padding:14px;flex:1}
+.screen.active{display:block}
+
+/* SEARCH BAR */
+.search-wrap{position:relative;margin-bottom:12px}
+.search-input{width:100%;border:1.5px solid var(--border1);border-radius:10px;padding:10px 14px 10px 38px;font-size:15px;background:var(--bg2);color:var(--text1);font-family:inherit}
+.search-input:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px rgba(245,158,11,0.12)}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:17px;pointer-events:none}
+.search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:2px}
+
+/* GRID */
+.label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
+.hive-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:14px}
+.hex-btn{border:1.5px solid var(--border1);border-radius:10px;background:var(--bg2);font-size:13px;font-weight:600;cursor:pointer;color:var(--text1);display:flex;align-items:center;justify-content:center;height:48px;position:relative;font-family:inherit;transition:all 0.1s}
+.hex-btn:active{transform:scale(0.93)}
+.hex-btn.selected{background:var(--amber);border-color:#D97706;color:#fff}
+.hex-btn.has-data{border-color:var(--amber);color:var(--amber-dark);background:var(--amber-light)}
+[data-theme="dark"] .hex-btn.has-data{color:var(--amber)}
+.dot{width:6px;height:6px;background:var(--amber);border-radius:50%;position:absolute;top:5px;right:5px}
+.hex-btn.hidden-cell{display:none}
+
+/* SEL BAR */
+.sel-bar{background:var(--amber-light);border:1.5px solid var(--amber);border-radius:10px;padding:12px 14px;font-size:15px;color:var(--amber-dark);display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+[data-theme="dark"] .sel-bar{color:var(--amber)}
+.sel-bar-left{display:flex;align-items:center;gap:8px}
+.sel-bar i{font-size:20px;color:var(--amber)}
+.btn-change{background:var(--amber);color:#fff;border:none;border-radius:8px;padding:8px 13px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:5px;font-family:inherit}
+.btn-change i{font-size:15px}
+
+/* FORM */
+.field-row{margin-bottom:14px}
+.form-input{width:100%;border:1.5px solid var(--border1);border-radius:10px;padding:11px 14px;font-size:15px;background:var(--bg1);color:var(--text1);font-family:inherit;transition:border-color 0.15s}
+.form-input:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 3px rgba(245,158,11,0.12)}
+.note-input{resize:vertical;min-height:100px;line-height:1.6}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+
+/* CATEGORY TABS (within form) */
+.cat-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px}
+.cat-tab{flex:0 0 auto;padding:7px 13px;border-radius:20px;border:1.5px solid var(--border1);background:var(--bg2);font-size:13px;cursor:pointer;color:var(--text2);font-family:inherit;font-weight:500;display:flex;align-items:center;gap:5px;transition:all 0.15s;white-space:nowrap}
+.cat-tab.active{background:var(--amber);border-color:#D97706;color:#fff}
+.cat-tab i{font-size:15px}
+
+/* SAVE BTN */
+.btn-save{width:100%;background:var(--amber);color:#fff;border:none;border-radius:10px;padding:15px;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit;margin-top:4px;position:sticky;bottom:10px;box-shadow:0 4px 12px rgba(245,158,11,0.35)}
+.btn-save:disabled{opacity:0.4;cursor:not-allowed;box-shadow:none}
+.btn-save i{font-size:20px}
+
+/* ENTRIES */
+.entry-card{background:var(--bg2);border:1px solid var(--border1);border-radius:12px;padding:14px;margin-bottom:10px}
+.entry-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.entry-cat-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.cat-shenime{background:#EEF2FF;color:#3730A3}
+.cat-trajtime{background:#FEE2E2;color:#991B1B}
+.cat-ushqim{background:#D1FAE5;color:#065F46}
+.cat-mbreteresha{background:#FDF4FF;color:#6B21A8}
+[data-theme="dark"] .cat-shenime{background:#1e1b4b;color:#a5b4fc}
+[data-theme="dark"] .cat-trajtime{background:#450a0a;color:#fca5a5}
+[data-theme="dark"] .cat-ushqim{background:#022c22;color:#6ee7b7}
+[data-theme="dark"] .cat-mbreteresha{background:#2e1065;color:#d8b4fe}
+.entry-date{font-size:13px;color:var(--text2);margin-left:auto;display:flex;align-items:center;gap:4px}
+.entry-date i{font-size:14px}
+.entry-text{font-size:14px;color:var(--text1);line-height:1.6}
+.btn-del{background:none;border:none;color:var(--text3);cursor:pointer;padding:3px;font-size:17px;line-height:1}
+.btn-del:active{color:var(--red)}
+.empty{text-align:center;padding:40px 16px;color:var(--text2)}
+.empty i{font-size:44px;display:block;margin:0 auto 12px;color:var(--border2)}
+
+/* VIEW HEADER */
+.view-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.view-title{display:flex;align-items:center;gap:7px;font-size:16px;font-weight:600;color:var(--text1)}
+.view-title i{font-size:20px;color:var(--amber)}
+.badge{background:var(--amber-light);color:var(--amber-dark);font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid var(--amber)}
+[data-theme="dark"] .badge{color:var(--amber)}
+.cnt{font-size:11px;background:var(--amber);color:#fff;border-radius:10px;padding:2px 7px;margin-left:3px;vertical-align:middle}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-card{background:var(--bg2);border:1px solid var(--border1);border-radius:12px;padding:14px;text-align:center}
+.stat-num{font-size:28px;font-weight:700;color:var(--amber)}
+.stat-label{font-size:12px;color:var(--text2);margin-top:3px}
+.hive-stat-item{background:var(--bg2);border:1px solid var(--border1);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.hive-stat-left{display:flex;align-items:center;gap:10px}
+.hive-num{font-size:16px;font-weight:700;color:var(--text1);width:30px}
+.hive-bar-wrap{flex:1;background:var(--border1);border-radius:4px;height:6px;margin:0 10px}
+.hive-bar{height:6px;border-radius:4px;background:var(--amber)}
+.hive-count{font-size:13px;font-weight:600;color:var(--text2)}
+
+/* BACKUP */
+.action-card{background:var(--bg2);border:1px solid var(--border1);border-radius:12px;padding:16px;margin-bottom:12px}
+.action-card-title{font-size:15px;font-weight:600;color:var(--text1);display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.action-card-title i{font-size:20px;color:var(--amber)}
+.action-card p{font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.5}
+.btn-action{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:9px;font-size:14px;font-weight:500;cursor:pointer;border:none;font-family:inherit}
+.btn-primary{background:var(--amber);color:#fff}
+.btn-secondary{background:var(--bg3);color:var(--text1);border:1px solid var(--border2)}
+.btn-danger{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA}
+[data-theme="dark"] .btn-danger{background:#450a0a;color:#fca5a5}
+.btn-action i{font-size:16px}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px}
+.drive-status{font-size:13px;padding:8px 12px;border-radius:8px;margin-top:8px;display:flex;align-items:center;gap:6px}
+.drive-ok{background:#D1FAE5;color:#065F46}
+.drive-err{background:#FEE2E2;color:#991B1B}
+[data-theme="dark"] .drive-ok{background:#022c22;color:#6ee7b7}
+[data-theme="dark"] .drive-err{background:#450a0a;color:#fca5a5}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(90px);background:var(--green);color:#fff;padding:11px 20px;border-radius:10px;font-size:14px;transition:transform 0.25s;z-index:999;white-space:nowrap;font-family:inherit;box-shadow:0 4px 12px rgba(0,0,0,0.2);display:flex;align-items:center;gap:7px}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--red)}
+.toast i{font-size:17px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg1);border-radius:20px 20px 0 0;padding:20px 16px 30px;width:100%;max-width:480px;max-height:80vh;overflow-y:auto}
+.modal-title{font-size:17px;font-weight:700;color:var(--text1);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+.modal-close{background:none;border:none;font-size:22px;color:var(--text2);cursor:pointer;padding:2px}
+</style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <i class="ti ti-hexagon splash-icon"></i>
+  <div class="splash-title">Bletaria ime</div>
+  <div class="splash-sub">Duke ngarkuar...</div>
+</div>
+
+<div class="app" id="app" style="display:none">
+  <!-- HEADER -->
+  <div class="header">
+    <i class="ti ti-hexagon header-icon"></i>
+    <div class="header-info">
+      <div class="header-title">Bletaria ime</div>
+      <div class="header-sub" id="hdr-sub">100 koshere</div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" onclick="toggleTheme()" title="Tema"><i class="ti ti-moon-stars" id="theme-icon"></i></button>
+      <button class="icon-btn" onclick="location.href='index.html'" title="Kryefaqja"><i class="ti ti-home"></i></button>
+      <button class="icon-btn" onclick="doLogout()" title="Dil"><i class="ti ti-logout"></i></button>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('shto')" id="tab-shto"><i class="ti ti-pencil-plus"></i>Shto</button>
+    <button class="tab" onclick="showTab('shiko')" id="tab-shiko"><i class="ti ti-clipboard-list"></i>Shiko<span id="tot" class="cnt">0</span></button>
+    <button class="tab" onclick="showTab('stat')" id="tab-stat"><i class="ti ti-chart-bar"></i>Statistika</button>
+    <button class="tab" onclick="showTab('backup')" id="tab-backup"><i class="ti ti-database"></i>Backup</button>
+  </div>
+
+  <!-- ===== TAB: SHTO ===== -->
+  <div id="screen-shto" class="screen active">
+    <div id="grid-wrap-add">
+      <div class="label">Kërko ose zgjidh kosheren</div>
+      <div class="search-wrap">
+        <i class="ti ti-search search-icon"></i>
+        <input type="text" class="search-input form-input" id="search-add" placeholder="Numri i kosheres..." oninput="filterGrid('grid-add',this.value)">
+        <button class="search-clear" onclick="clearSearch('search-add','grid-add')" style="display:none" id="clr-add"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="hive-grid" id="grid-add"></div>
+    </div>
+    <div id="form-add" style="display:none">
+      <div class="sel-bar">
+        <div class="sel-bar-left"><i class="ti ti-hexagon"></i><span>Koshere <strong id="sel-lbl-add"></strong></span></div>
+        <button class="btn-change" onclick="changeAdd()"><i class="ti ti-refresh"></i>Ndrysho</button>
+      </div>
+
+      <!-- Category selector -->
+      <div class="cat-tabs" id="cat-tabs">
+        <button class="cat-tab active" data-cat="shenime" onclick="setCat(this,'shenime')"><i class="ti ti-notes"></i>Shënim</button>
+        <button class="cat-tab" data-cat="trajtime" onclick="setCat(this,'trajtime')"><i class="ti ti-vaccine"></i>Trajtim</button>
+        <button class="cat-tab" data-cat="ushqim" onclick="setCat(this,'ushqim')"><i class="ti ti-bowl-spoon"></i>Ushqim</button>
+        <button class="cat-tab" data-cat="mbreteresha" onclick="setCat(this,'mbreteresha')"><i class="ti ti-crown"></i>Mbretëresha</button>
+      </div>
+
+      <!-- Dynamic form fields by category -->
+      <div id="fields-shenime">
+        <div class="field-row">
+          <div class="label">Data</div>
+          <input type="date" class="form-input" id="add-date">
+        </div>
+        <div class="field-row">
+          <div class="label">Shënimi</div>
+          <textarea class="form-input note-input" id="add-note" placeholder="Shkruaj shënimin këtu..."></textarea>
+        </div>
+      </div>
+
+      <div id="fields-trajtime" style="display:none">
+        <div class="field-row">
+          <div class="label">Data</div>
+          <input type="date" class="form-input" id="traj-date">
+        </div>
+        <div class="field-row">
+          <div class="label">Lloji i trajtimit</div>
+          <select class="form-input form-select" id="traj-type">
+            <option value="">Zgjidh...</option>
+            <option>Oksalik acid</option>
+            <option>Apivar</option>
+            <option>Apistan</option>
+            <option>Makulan</option>
+            <option>Thymovar</option>
+            <option>Tjetër</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="label">Sasia / Doza</div>
+          <input type="text" class="form-input" id="traj-doza" placeholder="p.sh. 5ml, 1 shirit...">
+        </div>
+        <div class="field-row">
+          <div class="label">Shënime shtesë</div>
+          <textarea class="form-input note-input" id="traj-note" placeholder="Vëzhgime, efekte..." style="min-height:70px"></textarea>
+        </div>
+      </div>
+
+      <div id="fields-ushqim" style="display:none">
+        <div class="field-row">
+          <div class="label">Data</div>
+          <input type="date" class="form-input" id="ush-date">
+        </div>
+        <div class="field-row">
+          <div class="label">Lloji i ushqimit</div>
+          <select class="form-input form-select" id="ush-type">
+            <option value="">Zgjidh...</option>
+            <option>Shurup sheqeri 1:1</option>
+            <option>Shurup sheqeri 2:1</option>
+            <option>Kek proteine</option>
+            <option>Polen artificial</option>
+            <option>Kandis</option>
+            <option>Tjetër</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="label">Sasia (kg/l)</div>
+          <input type="number" step="0.1" class="form-input" id="ush-sasia" placeholder="0.0">
+        </div>
+        <div class="field-row">
+          <div class="label">Shënime</div>
+          <textarea class="form-input note-input" id="ush-note" placeholder="Vëzhgime..." style="min-height:60px"></textarea>
+        </div>
+      </div>
+
+      <div id="fields-mbreteresha" style="display:none">
+        <div class="field-row">
+          <div class="label">Data e regjistrimit</div>
+          <input type="date" class="form-input" id="mbre-date">
+        </div>
+        <div class="field-row">
+          <div class="label">Viti i lindjes / çeljes</div>
+          <input type="number" class="form-input" id="mbre-viti" placeholder="2024" min="2000" max="2030">
+        </div>
+        <div class="field-row">
+          <div class="label">Raca</div>
+          <select class="form-input form-select" id="mbre-raca">
+            <option value="">Zgjidh...</option>
+            <option>Apis mellifera ligustica</option>
+            <option>Apis mellifera carnica</option>
+            <option>Apis mellifera macedonica</option>
+            <option>Hibride</option>
+            <option>E panjohur</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="label">Gjendje</div>
+          <select class="form-input form-select" id="mbre-gjendje">
+            <option value="">Zgjidh...</option>
+            <option>Aktive — veza normalisht</option>
+            <option>E re — sapo çelur</option>
+            <option>E humbur — pa mbretëreshë</option>
+            <option>Zëvendësuar</option>
+            <option>Vërehet rënie</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="label">Shënime</div>
+          <textarea class="form-input note-input" id="mbre-note" placeholder="Vëzhgime mbi mbretëreshën..." style="min-height:60px"></textarea>
+        </div>
+      </div>
+
+      <button class="btn-save" id="save-btn" onclick="saveEntry()" disabled>
+        <i class="ti ti-device-floppy"></i> Ruaj shënimin
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== TAB: SHIKO ===== -->
+  <div id="screen-shiko" class="screen">
+    <div id="grid-wrap-view">
+      <div class="label">Kërko ose zgjidh kosheren</div>
+      <div class="search-wrap">
+        <i class="ti ti-search search-icon"></i>
+        <input type="text" class="search-input form-input" id="search-view" placeholder="Numri i kosheres..." oninput="filterGrid('grid-view',this.value)">
+        <button class="search-clear" onclick="clearSearch('search-view','grid-view')" style="display:none" id="clr-view"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="hive-grid" id="grid-view"></div>
+    </div>
+    <div id="view-area" style="display:none"></div>
+  </div>
+
+  <!-- ===== TAB: STATISTIKA ===== -->
+  <div id="screen-stat" class="screen">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="st-total">0</div><div class="stat-label">Shënime gjithsej</div></div>
+      <div class="stat-card"><div class="stat-num" id="st-hives">0</div><div class="stat-label">Koshere aktive</div></div>
+      <div class="stat-card"><div class="stat-num" id="st-traj">0</div><div class="stat-label">Trajtime</div></div>
+      <div class="stat-card"><div class="stat-num" id="st-queen">0</div><div class="stat-label">Mbretëresha</div></div>
+    </div>
+    <div class="label">Koshere me më shumë aktivitet</div>
+    <div id="stat-list"></div>
+  </div>
+
+  <!-- ===== TAB: BACKUP ===== -->
+  <div id="screen-backup" class="screen">
+    <div class="action-card">
+      <div class="action-card-title"><i class="ti ti-download"></i>Shkarko Backup JSON</div>
+      <p>Eksporto të gjitha të dhënat në skedar JSON. Ruaje si kopje rezervë.</p>
+      <div class="btn-row">
+        <button class="btn-action btn-primary" onclick="exportJSON()"><i class="ti ti-download"></i>Shkarko JSON</button>
+      </div>
+    </div>
+    <div class="action-card">
+      <div class="action-card-title"><i class="ti ti-upload"></i>Rikthe nga Backup</div>
+      <p>Ngarko skedar JSON të ruajtur më parë. Kujdes: zëvendëson të dhënat ekzistuese!</p>
+      <div class="btn-row">
+        <button class="btn-action btn-secondary" onclick="document.getElementById('file-import').click()"><i class="ti ti-folder-open"></i>Zgjidh skedar JSON</button>
+        <input type="file" id="file-import" accept=".json" style="display:none" onchange="importJSON(event)">
+      </div>
+    </div>
+    <div class="action-card">
+      <div class="action-card-title"><i class="ti ti-file-spreadsheet"></i>Eksport Excel</div>
+      <p>Eksporto të gjitha shënimet në skedar Excel (.xlsx) për raportim ose analizë.</p>
+      <div class="btn-row">
+        <button class="btn-action btn-primary" onclick="exportExcel()"><i class="ti ti-table-export"></i>Shkarko Excel</button>
+      </div>
+    </div>
+    <div class="action-card">
+      <div class="action-card-title" style="color:var(--red)"><i class="ti ti-trash" style="color:var(--red)"></i>Fshi të dhënat</div>
+      <p>Fshi të gjitha shënimet. Ky veprim nuk mund të kthehet pas!</p>
+      <div class="btn-row">
+        <button class="btn-action btn-danger" onclick="clearAll()"><i class="ti ti-trash"></i>Fshi gjithçka</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- LOGIN -->
+<div id="login" style="position:fixed;inset:0;z-index:500;background:var(--bg1);display:none;align-items:center;justify-content:center;padding:20px">
+  <div style="width:100%;max-width:340px">
+    <div style="text-align:center;margin-bottom:20px"><i class="ti ti-hexagon" style="font-size:56px;color:var(--amber)"></i><div style="font-size:22px;font-weight:700">Bletaria ime</div></div>
+    <div class="field-row"><div class="label">Email</div><input id="lg-em" type="email" class="form-input" autocomplete="username"></div>
+    <div class="field-row"><div class="label">Fjalëkalimi (min. 6 shenja)</div><input id="lg-pw" type="password" class="form-input" autocomplete="current-password"></div>
+    <div class="btn-row"><button class="btn-action btn-primary" onclick="doLogin()">Hyr</button><button class="btn-action btn-secondary" onclick="doSignup()">Krijo llogari</button></div>
+    <div id="lg-err" style="color:var(--red);font-size:13px;margin-top:10px"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="ti ti-check" id="toast-icon"></i><span id="toast-msg"></span></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+// ─── STATE ───────────────────────────────────────────────
+let db={}, currentCat='shenime', selA=null, selV=null;
+let uid=null, cloudKeys=new Set();
+
+const CAT_META={
+  shenime:{label:'Shënim',icon:'ti-notes',badge:'cat-shenime'},
+  trajtime:{label:'Trajtim',icon:'ti-vaccine',badge:'cat-trajtime'},
+  ushqim:{label:'Ushqim',icon:'ti-bowl-spoon',badge:'cat-ushqim'},
+  mbreteresha:{label:'Mbretëresha',icon:'ti-crown',badge:'cat-mbreteresha'},
+};
+
+// ─── PERSISTENCE ─────────────────────────────────────────
+// Ruajtja në cloud (Firestore): një dokument për çdo koshere → users/{uid}/hives/{n}
+async function persist(keys){
+  if(!uid)return;
+  try{
+    const col=fdb.collection('users').doc(uid).collection('hives');
+    const batch=fdb.batch();
+    const ks=keys==='all'?new Set([...Object.keys(db),...cloudKeys]):new Set(keys.map(String));
+    ks.forEach(k=>{
+      const v=db[k],ref=col.doc(String(k));
+      if(v&&v.length){batch.set(ref,{entries:v});cloudKeys.add(String(k));}
+      else{batch.delete(ref);cloudKeys.delete(String(k));}
+    });
+    await batch.commit();
+  }catch(e){toast('Gabim në ruajtjen cloud: '+e.message,'ti-alert-circle',true);}
+}
+async function loadCloud(){
+  try{
+    const s=await fdb.collection('users').doc(uid).collection('hives').get();
+    const cloud={};cloudKeys=new Set();
+    s.docs.forEach(d=>{cloud[d.id]=d.data().entries||[];cloudKeys.add(d.id);});
+    let local={};
+    try{local=JSON.parse(localStorage.getItem('bletaria5')||'{}')}catch(e){}
+    db=cloud;
+    if(!s.size&&Object.keys(local).length&&confirm("U gjetën të dhëna të ruajtura në këtë telefon. T'i ngarkoj në cloud?")){
+      db=local;await persist('all');toast('Të dhënat u ngarkuan në cloud!','ti-cloud-upload');
+    }
+  }catch(e){toast('Gabim në ngarkim: '+e.message,'ti-alert-circle',true);}
+  buildGrid('grid-add',selectAdd);buildGrid('grid-view',selectView);updateStats();
+  if(selV)renderView(selV);
+}
+function totalCount(){return Object.values(db).reduce((a,v)=>a+(v?v.length:0),0)}
+
+// ─── THEME ───────────────────────────────────────────────
+function initTheme(){
+  const t=localStorage.getItem('theme')||'light';
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('theme-icon').className=t==='dark'?'ti ti-sun':'ti ti-moon-stars';
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const next=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  localStorage.setItem('theme',next);
+  document.getElementById('theme-icon').className=next==='dark'?'ti ti-sun':'ti ti-moon-stars';
+}
+
+// ─── GRID ────────────────────────────────────────────────
+function buildGrid(id,onClick){
+  const g=document.getElementById(id);g.innerHTML='';
+  for(let i=1;i<=100;i++){
+    const b=document.createElement('button');
+    b.className='hex-btn';b.dataset.n=i;b.textContent=i;
+    if(db[i]&&db[i].length){b.classList.add('has-data');const d=document.createElement('span');d.className='dot';b.appendChild(d)}
+    b.onclick=()=>onClick(i);
+    g.appendChild(b);
+  }
+  document.getElementById('tot').textContent=totalCount();
+}
+
+function filterGrid(gridId,val){
+  const clrId=gridId==='grid-add'?'clr-add':'clr-view';
+  document.getElementById(clrId).style.display=val?'block':'none';
+  document.querySelectorAll(`#${gridId} .hex-btn`).forEach(b=>{
+    b.classList.toggle('hidden-cell',val&&!b.dataset.n.startsWith(val));
+  });
+}
+function clearSearch(inputId,gridId){
+  document.getElementById(inputId).value='';
+  filterGrid(gridId,'');
+}
+
+// ─── ADD TAB ─────────────────────────────────────────────
+function selectAdd(n){
+  selA=n;
+  document.getElementById('grid-wrap-add').style.display='none';
+  document.getElementById('form-add').style.display='block';
+  document.getElementById('sel-lbl-add').textContent=n;
+  const today=new Date().toISOString().split('T')[0];
+  ['add-date','traj-date','ush-date','mbre-date'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value=today;
+  });
+  checkBtn();
+}
+function changeAdd(){
+  document.getElementById('grid-wrap-add').style.display='block';
+  document.getElementById('form-add').style.display='none';
+  selA=null;
+  buildGrid('grid-add',selectAdd);
+  checkBtn();
+}
+
+function setCat(btn,cat){
+  currentCat=cat;
+  document.querySelectorAll('.cat-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['shenime','trajtime','ushqim','mbreteresha'].forEach(c=>{
+    document.getElementById('fields-'+c).style.display=c===cat?'block':'none';
+  });
+  checkBtn();
+}
+
+function checkBtn(){
+  let ok=false;
+  if(selA){
+    if(currentCat==='shenime')ok=document.getElementById('add-date').value&&document.getElementById('add-note').value.trim();
+    else if(currentCat==='trajtime')ok=document.getElementById('traj-date').value&&document.getElementById('traj-type').value;
+    else if(currentCat==='ushqim')ok=document.getElementById('ush-date').value&&document.getElementById('ush-type').value;
+    else if(currentCat==='mbreteresha')ok=document.getElementById('mbre-date').value&&document.getElementById('mbre-gjendje').value;
+  }
+  document.getElementById('save-btn').disabled=!ok;
+}
+['add-date','add-note','traj-date','traj-type','traj-doza','ush-date','ush-type','ush-sasia','mbre-date','mbre-gjendje'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.addEventListener('input',checkBtn);
+});
+
+function saveEntry(){
+  const n=selA;if(!n)return;
+  let entry={id:Date.now(),cat:currentCat};
+  if(currentCat==='shenime'){
+    const d=document.getElementById('add-date').value,t=document.getElementById('add-note').value.trim();
+    if(!d||!t)return;
+    entry={...entry,date:d,text:t};
+    document.getElementById('add-note').value='';
+  } else if(currentCat==='trajtime'){
+    const d=document.getElementById('traj-date').value,tp=document.getElementById('traj-type').value;
+    if(!d||!tp)return;
+    entry={...entry,date:d,type:tp,doza:document.getElementById('traj-doza').value,note:document.getElementById('traj-note').value.trim()};
+    document.getElementById('traj-doza').value='';document.getElementById('traj-note').value='';document.getElementById('traj-type').value='';
+  } else if(currentCat==='ushqim'){
+    const d=document.getElementById('ush-date').value,tp=document.getElementById('ush-type').value;
+    if(!d||!tp)return;
+    entry={...entry,date:d,type:tp,sasia:document.getElementById('ush-sasia').value,note:document.getElementById('ush-note').value.trim()};
+    document.getElementById('ush-sasia').value='';document.getElementById('ush-note').value='';document.getElementById('ush-type').value='';
+  } else if(currentCat==='mbreteresha'){
+    const d=document.getElementById('mbre-date').value,gj=document.getElementById('mbre-gjendje').value;
+    if(!d||!gj)return;
+    entry={...entry,date:d,viti:document.getElementById('mbre-viti').value,raca:document.getElementById('mbre-raca').value,gjendje:gj,note:document.getElementById('mbre-note').value.trim()};
+    document.getElementById('mbre-note').value='';document.getElementById('mbre-gjendje').value='';
+  }
+  if(!db[n])db[n]=[];
+  db[n].push(entry);
+  db[n].sort((a,b)=>a.date.localeCompare(b.date));
+  persist([n]);
+  document.getElementById('save-btn').disabled=true;
+  buildGrid('grid-add',selectAdd);
+  updateStats();
+  toast('Shënimi u ruajt!','ti-check');
+}
+
+// ─── VIEW TAB ────────────────────────────────────────────
+function selectView(n){
+  selV=n;
+  document.getElementById('grid-wrap-view').style.display='none';
+  document.getElementById('view-area').style.display='block';
+  renderView(n);
+}
+function changeView(){
+  document.getElementById('grid-wrap-view').style.display='block';
+  document.getElementById('view-area').style.display='none';
+  selV=null;buildGrid('grid-view',selectView);
+}
+function renderView(n){
+  const list=db[n]||[];
+  let h=`<div class="view-header"><div class="view-title"><i class="ti ti-hexagon"></i><span>Koshere <strong>${n}</strong><span class="badge">${list.length} shënime</span></span></div><button class="btn-change" onclick="changeView()"><i class="ti ti-refresh"></i>Ndrysho</button></div>`;
+  if(!list.length){
+    h+='<div class="empty"><i class="ti ti-notes-off"></i>Nuk ka shënime<br>për kosheren '+n+'</div>';
+  } else {
+    // Filter by cat
+    h+='<div class="cat-tabs" style="margin-bottom:12px"><button class="cat-tab active" onclick="filterView(this,\'all\','+n+')">Të gjitha</button>';
+    Object.entries(CAT_META).forEach(([k,v])=>{
+      if(list.some(e=>e.cat===k))h+=`<button class="cat-tab" onclick="filterView(this,'${k}',${n})"><i class="ti ${v.icon}"></i>${v.label}</button>`;
+    });
+    h+='</div>';
+    const sorted=[...list].sort((a,b)=>b.date.localeCompare(a.date));
+    sorted.forEach(e=>{
+      const[y,m,d]=e.date.split('-');
+      const meta=CAT_META[e.cat||'shenime'];
+      let content='';
+      if(e.cat==='trajtime')content=`<strong>${e.type}</strong>${e.doza?' · '+e.doza:''}${e.note?'<br><span style="color:var(--text2)">'+esc(e.note)+'</span>':''}`;
+      else if(e.cat==='ushqim')content=`<strong>${e.type}</strong>${e.sasia?' · '+e.sasia+' kg/l':''}${e.note?'<br><span style="color:var(--text2)">'+esc(e.note)+'</span>':''}`;
+      else if(e.cat==='mbreteresha')content=`<strong>${e.gjendje}</strong>${e.raca?'<br>'+e.raca:''}${e.viti?' · '+e.viti:''}${e.note?'<br><span style="color:var(--text2)">'+esc(e.note)+'</span>':''}`;
+      else content=esc(e.text||'').replace(/\n/g,'<br>');
+      h+=`<div class="entry-card" data-cat="${e.cat||'shenime'}"><div class="entry-header"><span class="entry-cat-badge ${meta.badge}"><i class="ti ${meta.icon}"></i>${meta.label}</span><span class="entry-date"><i class="ti ti-calendar"></i>${d}/${m}/${y}</span><button class="btn-del" onclick="delEntry(${n},${e.id})"><i class="ti ti-trash"></i></button></div><div class="entry-text">${content}</div></div>`;
+    });
+  }
+  document.getElementById('view-area').innerHTML=h;
+}
+function filterView(btn,cat,n){
+  document.querySelectorAll('#view-area .cat-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#view-area .entry-card').forEach(c=>{
+    c.style.display=(cat==='all'||c.dataset.cat===cat)?'block':'none';
+  });
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function delEntry(n,id){
+  if(!db[n])return;
+  db[n]=db[n].filter(e=>e.id!==id);
+  if(!db[n].length)delete db[n];
+  persist([n]);buildGrid('grid-view',selectView);renderView(n);updateStats();
+  toast('Shënimi u fshi.','ti-trash');
+}
+
+// ─── STATS ───────────────────────────────────────────────
+function updateStats(){
+  const all=Object.entries(db);
+  const total=totalCount();
+  const active=all.filter(([,v])=>v&&v.length).length;
+  const traj=all.reduce((a,[,v])=>a+(v?v.filter(e=>e.cat==='trajtime').length:0),0);
+  const queen=all.reduce((a,[,v])=>a+(v?v.filter(e=>e.cat==='mbreteresha').length:0),0);
+  document.getElementById('st-total').textContent=total;
+  document.getElementById('st-hives').textContent=active;
+  document.getElementById('st-traj').textContent=traj;
+  document.getElementById('st-queen').textContent=queen;
+  document.getElementById('hdr-sub').textContent=`${active} koshere aktive`;
+
+  const sorted=all.filter(([,v])=>v&&v.length).sort((a,b)=>b[1].length-a[1].length).slice(0,10);
+  const max=sorted[0]?sorted[0][1].length:1;
+  document.getElementById('stat-list').innerHTML=sorted.length?sorted.map(([n,v])=>`<div class="hive-stat-item"><div class="hive-stat-left"><span class="hive-num">${n}</span><div class="hive-bar-wrap"><div class="hive-bar" style="width:${Math.round(v.length/max*100)}%"></div></div></div><span class="hive-count">${v.length} shënime</span></div>`).join(''):'<div class="empty"><i class="ti ti-chart-bar-off"></i>Nuk ka të dhëna akoma</div>';
+}
+
+// ─── BACKUP / EXPORT ─────────────────────────────────────
+function exportJSON(){
+  const blob=new Blob([JSON.stringify({version:2,exported:new Date().toISOString(),data:db},null,2)],{type:'application/json'});
+  dlBlob(blob,`bletaria_backup_${today()}.json`);
+  toast('Backup u shkarkua!','ti-download');
+}
+function importJSON(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      let d=JSON.parse(ev.target.result);
+      if(d.version&&d.data)d=d.data;
+      if(typeof d!=='object'||Array.isArray(d))throw new Error();
+      db=d;persist('all');
+      buildGrid('grid-add',selectAdd);buildGrid('grid-view',selectView);updateStats();
+      toast('Backup u rikthye!','ti-check');
+    }catch{toast('Skedar i pavlefshëm!','ti-alert-circle',true);}
+  };
+  r.readAsText(f);
+  e.target.value='';
+}
+function exportExcel(){
+  const rows=[['Koshere','Kategoria','Data','Detaje','Shënime']];
+  Object.entries(db).sort((a,b)=>+a[0]-+b[0]).forEach(([n,entries])=>{
+    (entries||[]).forEach(e=>{
+      const cat=CAT_META[e.cat||'shenime']?.label||'Shënim';
+      let det='',note='';
+      if(e.cat==='trajtime'){det=`${e.type||''}${e.doza?' ('+e.doza+')':''}`;note=e.note||'';}
+      else if(e.cat==='ushqim'){det=`${e.type||''}${e.sasia?' '+e.sasia+'kg/l':''}`;note=e.note||'';}
+      else if(e.cat==='mbreteresha'){det=`${e.gjendje||''}${e.raca?' · '+e.raca:''}${e.viti?' · '+e.viti:''}`;note=e.note||'';}
+      else{det=e.text||'';}
+      rows.push([+n,cat,e.date,det,note]);
+    });
+  });
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:8},{wch:14},{wch:12},{wch:40},{wch:30}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Bletaria');
+  XLSX.writeFile(wb,`bletaria_${today()}.xlsx`);
+  toast('Excel u shkarkua!','ti-table-export');
+}
+function clearAll(){
+  if(!confirm('Jeni i sigurt? Të gjitha shënimet do të fshihen!'))return;
+  db={};persist('all');
+  buildGrid('grid-add',selectAdd);buildGrid('grid-view',selectView);updateStats();
+  toast('Të dhënat u fshinë.','ti-trash');
+}
+function today(){return new Date().toISOString().split('T')[0];}
+function dlBlob(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();}
+
+// ─── TABS ────────────────────────────────────────────────
+function showTab(t){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  document.getElementById('screen-'+t).classList.add('active');
+  if(t==='stat')updateStats();
+}
+
+// ─── TOAST ───────────────────────────────────────────────
+function toast(msg,icon='ti-check',err=false){
+  const el=document.getElementById('toast'),ic=document.getElementById('toast-icon'),ms=document.getElementById('toast-msg');
+  ic.className='ti '+icon;ms.textContent=msg;
+  el.className='toast show'+(err?' err':'');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),2600);
+}
+
+// ─── INIT ────────────────────────────────────────────────
+initTheme();
+buildGrid('grid-add',selectAdd);buildGrid('grid-view',selectView);
+updateStats();
+
+// Splash → app
+setTimeout(()=>{
+  document.getElementById('splash').classList.add('hide');
+  document.getElementById('app').style.display='flex';
+  setTimeout(()=>document.getElementById('splash').remove(),600);
+},1200);
+
+// ─── FIREBASE: hyrja + cloud ─────────────────────────────
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(), fdb=firebase.firestore();
+const gv=id=>document.getElementById(id).value;
+function loginErr(e){document.getElementById('lg-err').textContent='Gabim: '+e.message;}
+function doLogin(){auth.signInWithEmailAndPassword(gv('lg-em'),gv('lg-pw')).catch(loginErr);}
+function doSignup(){auth.createUserWithEmailAndPassword(gv('lg-em'),gv('lg-pw')).catch(loginErr);}
+function doLogout(){auth.signOut();}
+auth.onAuthStateChanged(u=>{
+  uid=u?u.uid:null;
+  document.getElementById('login').style.display=u?'none':'flex';
+  if(u)loadCloud();
+  else{db={};cloudKeys=new Set();buildGrid('grid-add',selectAdd);buildGrid('grid-view',selectView);updateStats();}
+});
+
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body>
+</html>

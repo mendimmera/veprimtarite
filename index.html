@@ -3,280 +3,45 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ditari im</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#2a6df4">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Veprimtaritë">
+<meta name="apple-mobile-web-app-title" content="Ditari">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
-<title>Ditari i veprimtarive</title>
 <style>
-:root{--bg:#f5f6f8;--card:#fff;--tx:#1d2330;--mut:#667085;--ac:#2a6df4;--bd:#dfe3ea;--dg:#d92d20}
-@media (prefers-color-scheme:dark){:root{--bg:#12151c;--card:#1b2029;--tx:#e8ebf0;--mut:#98a2b3;--ac:#5b8def;--bd:#2c3340;--dg:#f97066}}
+:root{--bg:#f5f6f8;--card:#fff;--tx:#1d2330;--mut:#667085;--bd:#dfe3ea}
+@media (prefers-color-scheme:dark){:root{--bg:#12151c;--card:#1b2029;--tx:#e8ebf0;--mut:#98a2b3;--bd:#2c3340}}
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--tx)}
-.w{max-width:760px;margin:0 auto;padding:16px}
-h1{font-size:1.3rem;margin:0}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.c{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px}
-label{display:block;font-size:.85rem;color:var(--mut);margin:10px 0 4px}
-input,select,textarea{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
-textarea{min-height:70px;resize:vertical}
-button{padding:10px 14px;border:0;border-radius:8px;background:var(--ac);color:#fff;font:inherit;cursor:pointer}
-button.s{background:transparent;color:var(--ac);border:1px solid var(--bd)}
-button.d{background:transparent;color:var(--dg);padding:4px 8px}
-.r{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.pv,.ph{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.pv img,.ph img{width:96px;height:96px;object-fit:cover;border-radius:8px;cursor:pointer}
-.it{border-top:1px solid var(--bd);padding:12px 0}
-.it:first-child{border-top:0}
-.m{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.t{background:var(--ac);color:#fff;border-radius:99px;padding:2px 10px;font-size:.78rem}
-.dt{color:var(--mut);font-size:.85rem}
-.er{color:var(--dg);font-size:.9rem;margin-top:8px}
-#lb{position:fixed;inset:0;background:#000d;display:none;align-items:center;justify-content:center;z-index:9}
-#lb img{max-width:95%;max-height:95%}
-.hide{display:none}
-body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
-#nv{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom);z-index:5}
-#nv button{flex:1;background:transparent;color:var(--mut);border-radius:0;padding:16px 0;font-size:1rem}
-#nv button.on{color:var(--ac);font-weight:600;box-shadow:inset 0 3px 0 var(--ac)}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;font-family:system-ui,sans-serif;background:var(--bg);color:var(--tx);padding:20px calc(20px + env(safe-area-inset-right)) calc(20px + env(safe-area-inset-bottom)) calc(20px + env(safe-area-inset-left))}
+.w{max-width:440px;width:100%;margin:0 auto}
+h1{text-align:center;font-size:1.4rem;margin:0 0 6px}
+p.s{text-align:center;color:var(--mut);margin:0 0 22px}
+a.b{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:22px;margin-bottom:14px;text-decoration:none;color:inherit}
+a.b:active{transform:scale(.98)}
+a.b .i{font-size:2.6rem}
+a.b b{display:block;font-size:1.2rem}
+a.b span{color:var(--mut);font-size:.9rem}
+#ins{display:none;margin:18px auto 0;padding:12px 18px;border:1px solid var(--bd);border-radius:10px;background:transparent;color:var(--tx);font:inherit}
+.h{text-align:center;color:var(--mut);font-size:.82rem;margin-top:18px}
 </style>
 </head>
 <body>
 <div class="w">
-<header><h1>📋 Ditari i veprimtarive</h1><button id="out" class="s hide">Dil</button></header>
-
-<!-- Hyrja -->
-<div id="auth" class="c">
-  <label>Email</label><input id="em" type="email" autocomplete="username">
-  <label>Fjalëkalimi (min. 6 shenja)</label><input id="pw" type="password" autocomplete="current-password">
-  <div class="r"><button id="li">Hyr</button><button id="su" class="s">Krijo llogari</button></div>
-  <div id="aer" class="er"></div>
+  <h1>Ditari im</h1>
+  <p class="s">Çfarë do të hapësh?</p>
+  <a class="b" href="veprimtarite.html"><div class="i">📋</div><div><b>Veprimtaritë</b><span>Shënime me foto sipas datave</span></div></a>
+  <a class="b" href="bletaria.html"><div class="i">🐝</div><div><b>Bletaria</b><span>Kosheret, trajtimet, ushqimi, mbretëreshat</span></div></a>
+  <div style="text-align:center"><button id="ins">📲 Instalo aplikacionin</button></div>
+  <div class="h">iPhone: shtyp Share → Add to Home Screen</div>
 </div>
-
-<div id="app" class="hide">
-  <!-- Shto veprimtari -->
-  <div class="c" id="vAdd">
-    <b>Veprimtari e re</b>
-    <label>Data</label><input id="d" type="date">
-    <label>Lloji (zgjidh nga lista ose shkruaj një të ri)</label>
-    <input id="ty" list="tl" placeholder="p.sh. Mbledhje, Vizitë, Trajnim">
-    <datalist id="tl"></datalist>
-    <label>Përshkrimi i shkurtër</label><textarea id="ds"></textarea>
-    <div class="r">
-      <button class="s" onclick="document.getElementById('fg').click()">🖼️ Ngarko foto</button>
-      <button class="s" onclick="document.getElementById('fc').click()">📷 Bëj foto</button>
-    </div>
-    <input id="fg" type="file" accept="image/*" multiple class="hide">
-    <input id="fc" type="file" accept="image/*" capture="environment" class="hide">
-    <div id="pv" class="pv"></div>
-    <div class="r"><button id="sv">Ruaj</button><button id="cn" class="s hide">Anulo</button></div>
-    <div id="er" class="er"></div>
-  </div>
-
-  <!-- Kërko -->
-  <div id="vList" class="hide">
-    <div class="c" style="padding:10px">
-      <div class="r" style="margin:0"><select id="fl" style="flex:1;min-width:0"></select><button id="ft" class="s">🔍 Filtra</button></div>
-      <div id="fp" class="hide">
-        <input id="q" type="search" placeholder="Kërko në përshkrim" style="margin-top:8px">
-        <div class="r" style="margin-top:8px"><div style="flex:1;min-width:130px"><label style="margin:0 0 2px">Nga data</label><input id="df" type="date"></div><div style="flex:1;min-width:130px"><label style="margin:0 0 2px">Deri në datë</label><input id="dt2" type="date"></div></div>
-        <div class="r"><button id="cl" class="s">Pastro filtrat</button></div>
-      </div>
-    </div>
-    <div id="ls" class="c" style="padding-top:6px;padding-bottom:6px"></div>
-  </div>
-  <nav id="nv"><button id="n1" class="on">➕ Shto</button><button id="n2">📋 Veprimtaritë</button></nav>
-</div>
-</div>
-<div id="lb"><img id="lbi" alt=""></div>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
-// === ZëVENDËSO me të dhënat e projektit tënd Firebase ===
-const firebaseConfig = {
-  apiKey: "AIzaSyBOtjHeq635jNofyj-NuU4mgyzFOqympiQ",
-  authDomain: "veprimtarite-87886.firebaseapp.com",
-  projectId: "veprimtarite-87886",
-  storageBucket: "veprimtarite-87886.firebasestorage.app",
-  messagingSenderId: "959208667358",
-  appId: "1:959208667358:web:f85325481868f432e5aa4f",
-  measurementId: "G-2RK3Q75YSP"
-};
-// =========================================================
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth(), db = firebase.firestore();
-const $ = id => document.getElementById(id);
-let uid = null, items = [], photos = [], editId = null, cache = {};
-
-const today = () => new Date().toISOString().slice(0, 10);
-const fmt = s => s.split('-').reverse().join('.');
-
-// ---- Hyrja ----
-const authErr = e => $('aer').textContent = 'Gabim: ' + e.message;
-$('li').onclick = () => auth.signInWithEmailAndPassword($('em').value, $('pw').value).catch(authErr);
-$('su').onclick = () => auth.createUserWithEmailAndPassword($('em').value, $('pw').value).catch(authErr);
-$('out').onclick = () => auth.signOut();
-
-auth.onAuthStateChanged(u => {
-  uid = u ? u.uid : null;
-  $('auth').classList.toggle('hide', !!u);
-  $('app').classList.toggle('hide', !u);
-  $('out').classList.toggle('hide', !u);
-  if (u) { $('d').value = today(); tab(1); load(); }
-});
-
-// ---- Foto: ngjeshje para ruajtjes ----
-function compress(file) {
-  return new Promise((res, rej) => {
-    const img = new Image(), url = URL.createObjectURL(file);
-    img.onload = () => {
-      const k = Math.min(1, 800 / Math.max(img.width, img.height));
-      const c = document.createElement('canvas');
-      c.width = img.width * k; c.height = img.height * k;
-      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      URL.revokeObjectURL(url);
-      res(c.toDataURL('image/jpeg', 0.65));
-    };
-    img.onerror = rej;
-    img.src = url;
-  });
-}
-async function addFiles(e) {
-  for (const f of e.target.files) {
-    if (photos.length >= 4) { $('er').textContent = 'Maksimumi 4 foto për veprimtari.'; break; }
-    try { photos.push(await compress(f)); } catch (_) {}
-  }
-  e.target.value = '';
-  renderPv();
-}
-$('fg').onchange = addFiles; $('fc').onchange = addFiles;
-function renderPv() {
-  $('pv').innerHTML = '';
-  photos.forEach((p, i) => {
-    const im = document.createElement('img'); im.src = p;
-    im.title = 'Kliko për ta hequr';
-    im.onclick = () => { photos.splice(i, 1); renderPv(); };
-    $('pv').appendChild(im);
-  });
-}
-
-// ---- Menutë ----
-function tab(n) {
-  $('vAdd').classList.toggle('hide', n !== 1); $('vList').classList.toggle('hide', n !== 2);
-  $('n1').classList.toggle('on', n === 1); $('n2').classList.toggle('on', n === 2);
-  window.scrollTo(0, 0);
-}
-$('n1').onclick = () => tab(1); $('n2').onclick = () => tab(2);
-
-// ---- Ruaj / Ndrysho ----
-function resetForm() {
-  editId = null; $('ty').value = ''; $('ds').value = ''; $('d').value = today();
-  photos = []; renderPv(); $('sv').textContent = 'Ruaj'; $('cn').classList.add('hide'); $('er').textContent = '';
-}
-$('cn').onclick = () => { resetForm(); tab(2); };
-async function startEdit(i) {
-  editId = i.id; $('d').value = i.date; $('ty').value = i.type; $('ds').value = i.desc || '';
-  photos = (await getPhotos(i)).slice(); renderPv();
-  $('sv').textContent = 'Përditëso'; $('cn').classList.remove('hide');
-  tab(1);
-}
-$('sv').onclick = async () => {
-  const type = $('ty').value.trim(), desc = $('ds').value.trim(), date = $('d').value;
-  $('er').textContent = '';
-  if (!date || !type) { $('er').textContent = 'Plotëso datën dhe llojin.'; return; }
-  const doc = { date, type, desc, np: photos.length, created: Date.now() };
-  if (JSON.stringify(photos).length > 950000) { $('er').textContent = 'Fotot janë shumë të mëdha; hiq një foto.'; return; }
-  $('sv').disabled = true;
-  try {
-    const U = db.collection('users').doc(uid), col = U.collection('activities'), pc = U.collection('photos');
-    let id = editId;
-    if (editId) { delete doc.created; await col.doc(editId).update(doc); } else id = (await col.add(doc)).id;
-    if (photos.length) await pc.doc(id).set({ photos }); else if (editId) await pc.doc(id).delete();
-    cache[id] = photos.slice();
-    resetForm();
-    await load();
-    tab(2);
-  } catch (e) { $('er').textContent = 'Gabim në ruajtje: ' + e.message; }
-  $('sv').disabled = false;
-};
-
-// ---- Ngarko, filtro, shfaq ----
-async function getPhotos(i) {
-  if (cache[i.id]) return cache[i.id];
-  if (!i.np) return [];
-  const d = await db.collection('users').doc(uid).collection('photos').doc(i.id).get();
-  return cache[i.id] = d.exists ? (d.data().photos || []) : [];
-}
-
-async function load() {
-  const s = await db.collection('users').doc(uid).collection('activities').orderBy('date', 'desc').get();
-  items = [];
-  for (const d of s.docs) {
-    const x = { id: d.id, ...d.data() };
-    if (x.photos) { // migrim nga versioni i vjetër: fotot kalojnë në koleksion të veçantë
-      const ph = x.photos; delete x.photos; x.np = ph.length; cache[x.id] = ph;
-      try {
-        const U = db.collection('users').doc(uid);
-        if (ph.length) await U.collection('photos').doc(x.id).set({ photos: ph });
-        await U.collection('activities').doc(x.id).update({ photos: firebase.firestore.FieldValue.delete(), np: ph.length });
-      } catch (_) {}
-    }
-    items.push(x);
-  }
-  const types = [...new Set(items.map(i => i.type))].sort((a, b) => a.localeCompare(b));
-  const cur = $('fl').value;
-  $('fl').innerHTML = '<option value="">Të gjitha llojet</option>' + types.map(t => `<option>${esc(t)}</option>`).join('');
-  $('fl').value = types.includes(cur) ? cur : '';
-  $('tl').innerHTML = types.map(t => `<option value="${esc(t)}">`).join('');
-  render();
-}
-['fl', 'q', 'df', 'dt2'].forEach(id => { $(id).oninput = render; });
-$('fl').onchange = render;
-$('ft').onclick = () => $('fp').classList.toggle('hide');
-$('cl').onclick = () => { $('fl').value = ''; $('q').value = ''; $('df').value = ''; $('dt2').value = ''; render(); };
-const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-
-function render() {
-  const f = $('fl').value, q = $('q').value.trim().toLowerCase(), a = $('df').value, b = $('dt2').value;
-  const list = items.filter(i => (!f || i.type === f) && (!q || (i.desc || '').toLowerCase().includes(q) || i.type.toLowerCase().includes(q)) && (!a || i.date >= a) && (!b || i.date <= b));
-  $('ft').textContent = (q || a || b) ? '🔍 Filtra •' : '🔍 Filtra';
-  const box = $('ls'); box.innerHTML = `<p class="dt" style="margin:0 0 4px">${list.length} veprimtari</p>`;
-  if (!list.length) { box.innerHTML = '<p class="dt">Asnjë veprimtari.</p>'; return; }
-  list.forEach(i => {
-    const el = document.createElement('div'); el.className = 'it';
-    el.innerHTML = `<div class="m"><div><span class="t">${esc(i.type)}</span> <span class="dt">${fmt(i.date)}</span></div><span><button class="d ed" style="color:var(--ac)">Ndrysho</button><button class="d dl">Fshi</button></span></div><p>${esc(i.desc || '')}</p>${i.np ? `<button class="s pb">📷 ${i.np} foto</button>` : ''}<div class="ph"></div>`;
-    const pb = el.querySelector('.pb'), ph = el.querySelector('.ph');
-    if (pb) pb.onclick = async () => {
-      if (ph.children.length) { ph.innerHTML = ''; return; }
-      pb.disabled = true; pb.textContent = 'Duke ngarkuar…';
-      try {
-        (await getPhotos(i)).forEach(p => {
-          const im = document.createElement('img'); im.src = p;
-          im.onclick = () => { $('lbi').src = p; $('lb').style.display = 'flex'; };
-          ph.appendChild(im);
-        });
-      } catch (e) {}
-      pb.disabled = false; pb.textContent = `📷 ${i.np} foto`;
-    };
-    el.querySelector('.ed').onclick = () => startEdit(i);
-    el.querySelector('.dl').onclick = async () => {
-      if (!confirm('Ta fshij këtë veprimtari?')) return;
-      const U = db.collection('users').doc(uid);
-      await U.collection('activities').doc(i.id).delete();
-      await U.collection('photos').doc(i.id).delete();
-      delete cache[i.id];
-      load();
-    };
-    box.appendChild(el);
-  });
-}
-$('lb').onclick = () => $('lb').style.display = 'none';
-if ('serviceWorker' in navigator) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+let dp=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;document.getElementById('ins').style.display='inline-block';});
+document.getElementById('ins').onclick=()=>{if(dp){dp.prompt();dp=null;}};
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 </body>
 </html>

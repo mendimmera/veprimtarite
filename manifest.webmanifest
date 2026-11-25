@@ -1,6 +1,6 @@
 {
- "name": "Ditari i veprimtarive",
- "short_name": "Veprimtaritë",
+ "name": "Ditari im",
+ "short_name": "Ditari",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",
