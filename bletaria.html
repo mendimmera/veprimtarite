@@ -192,6 +192,7 @@ body{background:var(--bg2);font-family:-apple-system,BlinkMacSystemFont,'Segoe U
 <div class="app" id="app" style="display:none">
   <!-- HEADER -->
   <div class="header">
+    <button class="icon-btn" onclick="location.href='index.html'" title="Kryefaqja"><i class="ti ti-arrow-left"></i></button>
     <i class="ti ti-hexagon header-icon"></i>
     <div class="header-info">
       <div class="header-title">Bletaria ime</div>
@@ -199,7 +200,6 @@ body{background:var(--bg2);font-family:-apple-system,BlinkMacSystemFont,'Segoe U
     </div>
     <div class="header-actions">
       <button class="icon-btn" onclick="toggleTheme()" title="Tema"><i class="ti ti-moon-stars" id="theme-icon"></i></button>
-      <button class="icon-btn" onclick="location.href='index.html'" title="Kryefaqja"><i class="ti ti-home"></i></button>
       <button class="icon-btn" onclick="doLogout()" title="Dil"><i class="ti ti-logout"></i></button>
     </div>
   </div>
@@ -415,6 +415,7 @@ body{background:var(--bg2);font-family:-apple-system,BlinkMacSystemFont,'Segoe U
     <div class="field-row"><div class="label">Fjalëkalimi (min. 6 shenja)</div><input id="lg-pw" type="password" class="form-input" autocomplete="current-password"></div>
     <div class="btn-row"><button class="btn-action btn-primary" onclick="doLogin()">Hyr</button><button class="btn-action btn-secondary" onclick="doSignup()">Krijo llogari</button></div>
     <div id="lg-err" style="color:var(--red);font-size:13px;margin-top:10px"></div>
+    <div style="text-align:center;margin-top:18px"><a href="index.html" style="color:var(--text2);font-size:14px">← Kryefaqja</a></div>
   </div>
 </div>
 

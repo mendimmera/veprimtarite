@@ -1,4 +1,4 @@
-const C = 'ditari-v4';
+const C = 'ditari-v5';
 const SHELL = ['./', 'index.html', 'veprimtarite.html', 'bletaria.html', 'firebase-config.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(C).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener('activate', e => {
